@@ -16,6 +16,16 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "infrastructure/*": ["src/infrastructure/*"],
+      "repositories/*": ["src/repositories/*"],
+      "entities/*": ["src/entities/*"],
+      "controllers/*": ["src/controllers/*"],
+      "decorators/*": ["src/decorators/*"],
+      "middlewares/*": ["src/middlewares/*"],
+      "usecases/*": ["src/usecases/*"],
+      "utils/*": ["src/utils/*"],
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateProductDto } from 'infrastructure/controllers/product/product.dto';
 import { ILogger } from 'src/domain/logger/logger.interface';
-import { CreateProductDto } from 'src/infrastructure/controllers/product/product.presenter';
 import { ProductDescription } from 'src/infrastructure/entities/product-description.entity';
 import { CategoryRepository } from 'src/infrastructure/repositories/category.repository';
 import { ProductDescriptionRepository } from 'src/infrastructure/repositories/product-description.repository';

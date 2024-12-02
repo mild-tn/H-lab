@@ -8,10 +8,10 @@ import {
   Query,
   Headers,
 } from '@nestjs/common';
-import { CreateProductDto } from './product.presenter';
 import { UseCaseProxy } from 'src/infrastructure/usecases-proxy/usecases-proxy';
 import { CreateProductUseCases } from 'src/usecases/product/create-product.usecase';
 import { UsecasesProxyModule } from 'src/infrastructure/usecases-proxy/usecase-proxy.module';
+import { CreateProductDto } from './product.dto';
 
 @Controller('products')
 export class ProductController {
