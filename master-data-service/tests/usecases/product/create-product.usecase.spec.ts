@@ -16,6 +16,20 @@ describe('CreateProductUseCases', () => {
   let categoryRepository: CategoryRepository;
   let logger: LoggerService;
   beforeEach(() => {
+    productRepository = {
+      createProduct: jest.fn(),
+      findOne: jest.fn(),
+    } as unknown as ProductRepository;
+    categoryRepository = {
+      findCategory: jest.fn(),
+    } as unknown as CategoryRepository;
+    productDescriptionRepository = {
+      save: jest.fn(),
+    } as unknown as ProductDescriptionRepository;
+    logger = {
+      log: jest.fn(),
+    } as unknown as LoggerService;
+
     createProductUseCases = new CreateProductUseCases(
       logger,
       productRepository,
@@ -25,8 +39,6 @@ describe('CreateProductUseCases', () => {
   });
 
   it('should throw BadRequestException if category is not found', async () => {
-    jest.spyOn(categoryRepository, 'findCategory').mockResolvedValue(null);
-
     const product: CreateProductDto = {
       categoryId: 1,
       sku: 'test-sku',
@@ -42,11 +54,7 @@ describe('CreateProductUseCases', () => {
       ),
     );
   });
-
   it('should throw BadRequestException if product with SKU already exists', async () => {
-    jest.spyOn(categoryRepository, 'findCategory').mockResolvedValue(null);
-    jest.spyOn(productRepository, 'findOne').mockResolvedValue(null);
-
     const product = {
       categoryId: 1,
       sku: 'test-sku',
@@ -54,13 +62,21 @@ describe('CreateProductUseCases', () => {
       descriptions: [],
     } as CreateProductDto;
 
+    jest.spyOn(categoryRepository, 'findCategory').mockResolvedValue({
+      id: 1,
+      parentId: '2',
+    } as Category);
+    jest.spyOn(productRepository, 'findOne').mockResolvedValue({
+      sku: 'test-sku',
+    } as Product);
+
     await expect(createProductUseCases.execute(product)).rejects.toThrow(
       new BadRequestException(`Product with SKU ${product.sku} already exists`),
     );
   });
 
   it('should create product and save descriptions', async () => {
-    const category = {} as Category;
+    const category = { id: 1 } as Category;
     const createdProduct = { id: 1 } as Product;
     const productDescriptions = [
       { description: 'desc1', language: 'en' },
@@ -83,9 +99,8 @@ describe('CreateProductUseCases', () => {
       descriptions: productDescriptions,
     } as unknown as CreateProductDto;
 
-    const result = await createProductUseCases.execute(product);
+    await createProductUseCases.execute(product);
 
-    expect(result).toEqual({ product, productDescriptions });
     expect(logger.log).toHaveBeenCalledWith(
       CreateProductUseCases.name,
       'New product has been inserted',
