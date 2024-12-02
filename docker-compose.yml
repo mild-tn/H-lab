@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  customer-db:
+    image: postgres:17-alpine
+    ports:
+      - "5433:5432"
+    volumes:
+      - customer_pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=api
+      - POSTGRES_PASSWORD=wowSecurePassword
+      - POSTGRES_DB=customer-db
+
+  master-data-db:
+    image: postgres:17-alpine
+    ports:
+      - "5434:5432"
+    volumes:
+      - master_pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=api
+      - POSTGRES_PASSWORD=api
+      - POSTGRES_DB=master-data-db
+
+  transaction-db:
+    image: postgres:17-alpine
+    ports:
+      - "5435:5432"
+    volumes:
+      - transaction_pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=api
+      - POSTGRES_PASSWORD=wowSecurePassword
+      - POSTGRES_DB=transaction-db
+
+volumes:
+  customer_pgdata:
+  master_pgdata:
+  transaction_pgdata:
