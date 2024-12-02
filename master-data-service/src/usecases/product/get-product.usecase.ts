@@ -27,7 +27,10 @@ export class GetProductUseCases {
         `Not found product id ${productId}`,
       );
     } else {
-      this.logger.log(GetProductUseCases.name, `Found product id ${productId}`);
+      this.logger.log(
+        GetProductUseCases.name,
+        `Found product id ${productId ?? ''}`,
+      );
     }
     return result;
   }
