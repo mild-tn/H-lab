@@ -10,28 +10,30 @@ export class GetProductUseCases {
     private readonly productRepository: ProductRepository,
   ) {}
 
-  async execute(productId: number, language: string) {
-    let result = null;
+  async execute(
+    productId: number,
+    query: { language: string; page: number; pageSize },
+  ) {
     if (!productId) {
-      result = await this.productRepository.findAllProducts(language);
+      this.logger.log(`${GetProductUseCases.name}`, 'find all products');
+      const result = await this.productRepository.findAllProducts(query);
+      return {
+        data: result.products,
+        metadata: {
+          page: query.page || 1,
+          pageSize: query.pageSize || 10,
+          total: result.count,
+        },
+      };
     } else {
-      result = await this.productRepository.findProductById(
+      this.logger.log(
+        `${GetProductUseCases.name}`,
+        `find product detail with id ${productId}`,
+      );
+      return await this.productRepository.findProductById(
         productId,
-        language,
+        query.language,
       );
     }
-
-    if (!result) {
-      this.logger.log(
-        GetProductUseCases.name,
-        `Not found product id ${productId}`,
-      );
-    } else {
-      this.logger.log(
-        GetProductUseCases.name,
-        `Found product id ${productId ?? ''}`,
-      );
-    }
-    return result;
   }
 }

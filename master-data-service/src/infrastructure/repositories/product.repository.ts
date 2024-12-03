@@ -41,14 +41,26 @@ export class ProductRepository extends Repository<Product> {
     return result;
   }
 
-  async findAllProducts(language: string): Promise<Product[]> {
-    return await this.repository
+  async findAllProducts(query: {
+    language: string;
+    pageSize?: number;
+    page: number;
+  }): Promise<{ products: Product[]; count: number }> {
+    const { page = 1, pageSize = 10, language } = query;
+    const skip = (page - 1) * pageSize;
+
+    const data = await this.repository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category')
       .leftJoinAndSelect('category.categoryDescriptions', 'categoryDescription')
       .leftJoinAndSelect('product.productDescriptions', 'productDescription')
       .where('categoryDescription.language = :language', { language })
-      .andWhere('productDescription.language = :language', { language })
-      .getMany();
+      .andWhere('productDescription.language = :language', { language });
+    const count = await data.getCount();
+    const products = await data.offset(skip).limit(pageSize).getMany();
+    return {
+      products,
+      count,
+    };
   }
 }

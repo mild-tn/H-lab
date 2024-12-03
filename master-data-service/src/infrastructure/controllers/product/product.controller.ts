@@ -28,8 +28,14 @@ export class ProductController {
   }
 
   @Get()
-  findOne(@Query('id') id: number, @Headers('Accept-Language') lang: string) {
-    console.log(lang);
-    return this.getProductUsecase.getInstance().execute(id, lang);
+  findOne(
+    @Query() query: { page: number; pageSize: number; id: number },
+    @Headers('Accept-Language') lang: string,
+  ) {
+    return this.getProductUsecase.getInstance().execute(query.id, {
+      language: lang,
+      page: query?.page,
+      pageSize: query?.pageSize,
+    });
   }
 }
